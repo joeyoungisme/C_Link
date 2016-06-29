@@ -3,6 +3,10 @@
 
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
+
+#define LINK_HEAD	0
+#define LINK_TAIL	1
 
 
 int LinkList_Init();

@@ -1,5 +1,14 @@
 #include "link.h"
 
+LinkList *LinkList_SecondLast(LinkList *head, LinkList *pEnd)
+{
+	if(!head) return NULL;
+
+	if(head -> pNext == pEnd) return head;
+	
+	return LinkList_SecondLast(head -> pNext, pEnd);
+}
+
 LinkList *LinkList_FindEnd(LinkList *head)
 {
 	if(head == NULL) return NULL;
@@ -11,7 +20,10 @@ LinkList *LinkList_FindEnd(LinkList *head)
 
 LinkList *LinkList_NewItem()
 {
-	return malloc(sizeof(struct _LinkList));
+	LinkList *pNew;
+	pNew = malloc(sizeof(struct _LinkList));
+	memset(pNew, 0, sizeof(struct _LinkList));
+	return pNew;
 }
 
 void LinkList_Print(LinkList *head)
@@ -43,7 +55,7 @@ int LinkList_Add(int data)
 {
 	LinkList *pEnd = NULL;
 
-	if (root == NULL)
+	if (!root)
 	{
 		root = LinkList_NewItem();
 		root -> data = data;
@@ -58,21 +70,55 @@ int LinkList_Add(int data)
 	return 0;
 }
 
-int LinkList_Get()
+int LinkList_Get(int flag)
 {
+	LinkList *pTemp;
 	int getData = 0;
+	
+	if(!root)
+	{
+		printf("No Data\n");
+		return 0;
+	}
+
+	switch(flag)
+	{
+		case LINK_HEAD:
+			pTemp = root -> pNext;
+			getData = root -> data;
+			free(root);
+			root = pTemp;
+			return getData;
+		case LINK_TAIL:
+			pTemp = LinkList_SecondLast(root, LinkList_FindEnd(root));
+			if(!pTemp)
+			{
+				getData = root -> data;
+				free(root);
+				root = pTemp;
+			}
+			else
+			{
+				getData = pTemp -> pNext -> data;
+				free(pTemp -> pNext);
+				pTemp -> pNext = NULL;
+			}
+			return getData;
+		default:
+			return 1;
+	}
 	return getData;
 }
 
 int LinkList_List()
 {
 	printf("Root");
-	LinkList_Print(root);
+	if(root) LinkList_Print(root);
 	printf("\n");
 	return 0;
 }
 
 void LinkList_Close()
 {
-	LinkList_Free(root);
+	if(root) LinkList_Free(root);
 }
